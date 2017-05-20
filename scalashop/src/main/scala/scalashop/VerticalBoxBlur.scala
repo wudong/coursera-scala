@@ -58,12 +58,12 @@ object VerticalBoxBlur {
    *  columns.
    */
   def parBlur(src: Img, dst: Img, numTasks: Int, radius: Int): Unit = {
-    val columnsPerTask =src.width / numTasks
+    val remainder = src.width % numTasks
+    val columnsPerTask = (src.width / numTasks) + (if (remainder == 0) 0 else 1)
 
     val allTasks = for (
       idx <- 0 until numTasks
     ) yield{
-
       val from = idx * columnsPerTask
       val to = (from + columnsPerTask) min (src.width)
 
