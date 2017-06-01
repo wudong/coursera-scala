@@ -41,7 +41,23 @@ object ParallelParenthesesBalancing {
   /** Returns `true` iff the parentheses in the input `chars` are balanced.
    */
   def balance(chars: Array[Char]): Boolean = {
-    ???
+
+    def doloop(chars: Array[Char], numOpens: Int) : Boolean = {
+      if (chars.isEmpty) numOpens == 0
+      else{
+        val cur = chars.head
+        val n =
+          if (cur=='(') numOpens + 1
+          else if (cur==')') numOpens -1
+          else numOpens
+
+        if (n >=0) doloop(chars.tail, n)
+        else false
+      }
+    }
+
+    doloop(chars, 0)
+
   }
 
   /** Returns `true` iff the parentheses in the input `chars` are balanced.
