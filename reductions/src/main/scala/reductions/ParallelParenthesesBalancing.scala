@@ -64,15 +64,33 @@ object ParallelParenthesesBalancing {
    */
   def parBalance(chars: Array[Char], threshold: Int): Boolean = {
 
-    def traverse(idx: Int, until: Int, arg1: Int, arg2: Int) /*: ???*/ = {
-      ???
+    //find unmatched, '(' and ')' in the current given range.
+    def traverse(idx: Int, until: Int, arg1: Int, arg2: Int) : (Int, Int) = {
+      def helper (chars: List[Char], acc: (Int, Int)): (Int, Int) = {
+        chars match {
+          case Nil => acc
+          case '(' :: tail => helper(tail, (acc._1 + 1, acc._2))
+          case ')' :: tail => {
+            if (acc._1 > 0) helper(tail, (acc._1 -1, acc._2))
+            else helper(tail, (acc._1, acc._2 +1))
+          }
+          case x :: tail => helper(tail, acc)
+        }
+      }
+      helper(chars.slice(idx, until).toList, (arg1, arg2))
     }
 
-    def reduce(from: Int, until: Int) /*: ???*/ = {
-      ???
+    def reduce(from: Int, until: Int) : (Int, Int) = {
+      if (until - from <= threshold) traverse(from, until, 0, 0)
+      else {
+        val mid = (from + until) / 2
+        val (l, r) = parallel (reduce(from, mid), reduce(mid, until))
+        val matched = scala.math.min(l._1, r._1)
+        (l._1 + r._1 - matched, l._2 + r._2 - matched)
+      }
     }
 
-    reduce(0, chars.length) == ???
+    reduce(0, chars.length) == (0,0)
   }
 
   // For those who want more:
